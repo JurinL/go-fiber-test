@@ -10,8 +10,7 @@ func InetRoutes(app *fiber.App) {
 	// Basic auth middleware
 	app.Use(basicauth.New(basicauth.Config{
 		Users: map[string]string{
-			"john": "doe",
-			"Jurin": "1234",
+			"gofiber": "21022566",
 		},
 	}))
 	// /api/v1
