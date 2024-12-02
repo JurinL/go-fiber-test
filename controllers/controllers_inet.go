@@ -5,10 +5,23 @@ import (
 	m "go-fiber-test/models"
 	"github.com/gofiber/fiber/v2"
 	"github.com/go-playground/validator/v10"
+	"strconv"
 )
 
 func HelloTest(c *fiber.Ctx) error { 
 	return c.SendString("Hello, World!")
+}
+
+func Factorial(c *fiber.Ctx) error {
+	num, err := strconv.Atoi(c.Params("num"))
+	result := 1
+	if err != nil {
+        return err
+    }
+	for i := 1; i <= num; i++ {
+		result *= i
+	}
+	return c.SendString(c.Params("num") + "! = " + strconv.Itoa(result))
 }
 
 func HelloTestV2(c *fiber.Ctx) error { 

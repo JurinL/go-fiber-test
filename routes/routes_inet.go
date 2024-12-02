@@ -23,4 +23,5 @@ func InetRoutes(app *fiber.App) {
 	v1.Get("/user/:name",controllers.ParamsTest)
 	v1.Post("/inet",controllers.QueryTest)
 	v1.Post("/valid",controllers.ValidTest)
+	v1.Get("/fact/:num",controllers.Factorial)
 }
