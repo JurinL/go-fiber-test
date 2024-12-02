@@ -104,13 +104,22 @@ func Register(c *fiber.Ctx) error {
         })
     }
 
-    // Check phone pattern
-    phoneMatch, _ := regexp.MatchString(`^[0-9]+$`, user.Phone)
-    if !phoneMatch {
+	// Check password pattern - no whitespace allowed
+    passwordMatch, _ := regexp.MatchString(`^\S+$`, user.Password)
+    if !passwordMatch {
         return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-            "message": "Phone must contain only numbers",
+            "message": "Password cannot contain whitespace",
         })
     }
+
+    // Check phone pattern - no whitespace allowed
+    phoneMatch, _ := regexp.MatchString(`^\d+$`, user.Phone)
+    if !phoneMatch {
+        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+            "message": "Phone must contain only numbers without spaces",
+        })
+    }
+
 
 	// Check website pattern
 	websiteMatch, _ := regexp.MatchString(`^https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`, user.Website)
