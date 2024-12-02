@@ -88,6 +88,14 @@ func Register(c *fiber.Ctx) error {
         })
     }
 
+	// Check email pattern
+	emailMatch, _ := regexp.MatchString(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`, user.Email)
+	if !emailMatch {
+        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+            "message": "Invalid email format",
+        })
+    }
+
     // Check username pattern
     usernameMatch, _ := regexp.MatchString(`^[a-zA-Z0-9_-]+$`, user.Username)
     if !usernameMatch {
@@ -101,6 +109,14 @@ func Register(c *fiber.Ctx) error {
     if !phoneMatch {
         return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
             "message": "Phone must contain only numbers",
+        })
+    }
+
+	// Check website pattern
+	websiteMatch, _ := regexp.MatchString(`^https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`, user.Website)
+	if !websiteMatch {
+        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+            "message": "Invalid website format",
         })
     }
 

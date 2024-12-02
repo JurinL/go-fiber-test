@@ -21,7 +21,7 @@ type Register struct {
 	LineID       string `json:"lineid" validate:"required"`
 	Phone        string `json:"phone" validate:"required"`
 	BusinessKind string `json:"businesskind" validate:"required"`
-	Website      string `json:"website" validate:"url"`
+	Website      string `json:"website" validate:"required,url,min=2,max=30"`
 }
 
 //,regexp=^[a-zA-Z0-9_]+$ regexp=^[0-9-]+$
