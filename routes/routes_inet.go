@@ -3,7 +3,7 @@ package routes
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
-	"go-fiber-test/controllers"
+	c "go-fiber-test/controllers"
 )
 
 func InetRoutes(app *fiber.App) {
@@ -17,11 +17,13 @@ func InetRoutes(app *fiber.App) {
 	api := app.Group("/api")
 	v1 := api.Group("/v1")
 	v2 := api.Group("/v2")
-	v2.Get("/",controllers.HelloTestV2)
-	v1.Get("/",controllers.HelloTest)
-	v1.Post("/",controllers.BodyParserTest)
-	v1.Get("/user/:name",controllers.ParamsTest)
-	v1.Post("/inet",controllers.QueryTest)
-	v1.Post("/valid",controllers.ValidTest)
-	v1.Get("/fact/:num",controllers.Factorial)
+	v3 := api.Group("/v3")
+	v2.Get("/",c.HelloTestV2)
+	v1.Get("/",c.HelloTest)
+	v1.Post("/",c.BodyParserTest)
+	v1.Get("/user/:name",c.ParamsTest)
+	v1.Post("/inet",c.QueryTest)
+	v1.Post("/valid",c.ValidTest)
+	v1.Get("/fact/:num",c.Factorial)
+	v3.Post("/jurin",c.QueryParams)
 }

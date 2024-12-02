@@ -12,6 +12,7 @@ func HelloTest(c *fiber.Ctx) error {
 	return c.SendString("Hello, World!")
 }
 
+//Exercise 5.1
 func Factorial(c *fiber.Ctx) error {
 	num, err := strconv.Atoi(c.Params("num"))
 	result := 1
@@ -50,6 +51,15 @@ func QueryTest(c *fiber.Ctx) error{
 	a := c.Query("search")
 	str := "my search is " + a
 	return c.JSON(str)
+}
+// Exercise 5.2
+func QueryParams(c *fiber.Ctx) error{
+	a := c.Query("tax_id")
+	str := ""
+	for _, char := range a {
+		str += strconv.Itoa(int(char)) + " "
+	}
+	return c.SendString(str)
 }
 
 func ValidTest(c *fiber.Ctx) error {
