@@ -1,13 +1,12 @@
 package main
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+	"go-fiber-test/routes"
+)
 
 func main() {
-	app := fiber.New()
-
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
-
-	app.Listen(":3000")
+	app := fiber.New() // create new Fiber instance
+	routes.InetRoutes(app)
+	app.Listen(":3000") //port
 }
