@@ -26,4 +26,5 @@ func InetRoutes(app *fiber.App) {
 	v1.Post("/valid",c.ValidTest)
 	v1.Get("/fact/:num",c.Factorial)
 	v3.Post("/jurin",c.QueryParams)
+	v1.Post("/register",c.Register)
 }

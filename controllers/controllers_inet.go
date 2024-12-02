@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/go-playground/validator/v10"
 	"strconv"
+	"regexp"
 )
 
 func HelloTest(c *fiber.Ctx) error { 
@@ -77,4 +78,36 @@ func ValidTest(c *fiber.Ctx) error {
 		
 	}
 	return c.JSON(user)
+}
+
+func Register(c *fiber.Ctx) error {
+    user := new(m.Register)
+    if err := c.BodyParser(&user); err != nil {
+        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+            "message": err.Error(),
+        })
+    }
+
+    // Check username pattern
+    usernameMatch, _ := regexp.MatchString(`^[a-zA-Z0-9_-]+$`, user.Username)
+    if !usernameMatch {
+        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+            "message": "Username must contain only letters, numbers, underscore or hyphen",
+        })
+    }
+
+    // Check phone pattern
+    phoneMatch, _ := regexp.MatchString(`^[0-9]+$`, user.Phone)
+    if !phoneMatch {
+        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+            "message": "Phone must contain only numbers",
+        })
+    }
+
+    validate := validator.New()
+    errors := validate.Struct(user)
+    if errors != nil {
+        return c.Status(fiber.StatusBadRequest).JSON(errors.Error())
+    }
+    return c.JSON(user)
 }
