@@ -2,7 +2,6 @@ package models
 
 import (
 	"gorm.io/gorm"
-	"time"
 )
 
 // Person represents a person with a name and password.
@@ -30,9 +29,9 @@ type Register struct {
 }
 
 type Dogs struct {
-	gorm.Model 
-	Name string `json:"name"`
-	DogID int `json:"dog_id"`
+	gorm.Model
+	Name  string `json:"name"`
+	DogID int    `json:"dog_id"`
 }
 
 type DogsRes struct {
@@ -42,32 +41,32 @@ type DogsRes struct {
 }
 
 type ResultData struct {
-	Count int       `json:"count"`
-	Data  []DogsRes `json:"data"`
-	Name  string    `json:"name"`
-	Sum_red int 	`json:"sum_red"`
-	Sum_green int 	`json:"sum_green"`
-	Sum_pink int 	`json:"sum_pink"`
-	Sum_nocolor int `json:"sum_nocolor"`
+	Count       int       `json:"count"`
+	Data        []DogsRes `json:"data"`
+	Name        string    `json:"name"`
+	Sum_red     int       `json:"sum_red"`
+	Sum_green   int       `json:"sum_green"`
+	Sum_pink    int       `json:"sum_pink"`
+	Sum_nocolor int       `json:"sum_nocolor"`
 }
 
 // Exercise 7.0.1
 type Company struct {
-	Name string `json:"name"`
-	Phone string `json:"phone"`
-	Address string `json:"address"`
-	Email string `json:"email"`
-	Website string `json:"website"`
+	Name     string `json:"name"`
+	Phone    string `json:"phone"`
+	Address  string `json:"address"`
+	Email    string `json:"email"`
+	Website  string `json:"website"`
 	Facebook string `json:"facebook"`
 }
 
 type Employee struct { //project_1
-    gorm.Model
-    EmployeeID int       `json:"employee_id"`
-    Name       string    `json:"name"`
-    LastName   string    `json:"lastname"`
-    Birthday   time.Time `json:"birthday"`
-    Age        int       `json:"age"`
-    Email      string    `json:"email"`
-    Tel        string    `json:"tel"`
+	gorm.Model
+	EmployeeID string `json:"employee_id" validate:"required"`
+	Name       string `json:"name" validate:"required"`
+	LastName   string `json:"lastname" validate:"required"`
+	Birthday   string `json:"birthday" validate:"required" gorm:"type:date"`
+	Age        int    `json:"age" validate:"required"`
+	Email      string `json:"email" validate:"required,email"`
+	Tel        string `json:"tel" validate:"required"`
 }

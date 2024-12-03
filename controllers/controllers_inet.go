@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -209,9 +210,9 @@ func GetDogsJson(c *fiber.Ctx) error { // Exercise 7.2
 	sum_green := 0
 	sum_pink := 0
 	sum_nocolor := 0
-	db.Find(&dogs) 
+	db.Find(&dogs)
 	var dataResults []m.DogsRes
-	for _, v := range dogs { 
+	for _, v := range dogs {
 		typeStr := ""
 		if v.DogID >= 10 && v.DogID <= 50 {
 			typeStr = "red"
@@ -228,20 +229,20 @@ func GetDogsJson(c *fiber.Ctx) error { // Exercise 7.2
 		}
 
 		d := m.DogsRes{
-			Name:  v.Name,  
-			DogID: v.DogID, 
-			Type:  typeStr, 
+			Name:  v.Name,
+			DogID: v.DogID,
+			Type:  typeStr,
 		}
 		dataResults = append(dataResults, d)
 	}
 
 	r := m.ResultData{
-		Count: len(dogs),
-		Data:  dataResults,
-		Name:  "golang-test",
-		Sum_red: sum_red,
-		Sum_green: sum_green,
-		Sum_pink: sum_pink,
+		Count:       len(dogs),
+		Data:        dataResults,
+		Name:        "golang-test",
+		Sum_red:     sum_red,
+		Sum_green:   sum_green,
+		Sum_pink:    sum_pink,
 		Sum_nocolor: sum_nocolor,
 	}
 	return c.Status(200).JSON(r)
@@ -271,6 +272,38 @@ func AddEmployee(c *fiber.Ctx) error { //project_2
 		return c.Status(503).SendString(err.Error())
 	}
 
+	validate := validator.New()
+	errors := validate.Struct(employee)
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(errors.Error())
+	}
+
+	//check birthday
+	layouts := []string{"02/01/2006", "2006-01-02", "02-01-2006"}
+	var parsedDate time.Time
+	var err error
+	for _, layout := range layouts {
+		parsedDate, err = time.Parse(layout, employee.Birthday)
+		if err == nil {
+			break
+		}
+	}
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid birthday format. Supported formats: DD/MM/YYYY, YYYY-MM-DD, DD-MM-YYYY",
+			"error":   err.Error(),
+		})
+	}
+	employee.Birthday = parsedDate.Format("2006-01-02") // Standardize output format
+
 	db.Create(&employee)
 	return c.Status(201).JSON(&employee)
+}
+
+func GetEmployee(c *fiber.Ctx) error {
+	db := database.DBConn
+	var employee []m.Employee
+
+	db.Find(&employee) //delelete = null
+	return c.Status(200).JSON(employee)
 }

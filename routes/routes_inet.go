@@ -7,15 +7,20 @@ import (
 )
 
 func InetRoutes(app *fiber.App) {
+	api := app.Group("/api")
+	v1 := api.Group("/v1")
+	v2 := api.Group("/v2")
+	v3 := api.Group("/v3")
+	dog := v1.Group("/dog")
 	// Basic auth middleware
+	v1.Get("/employee", c.GetEmployee) //project_2
 	app.Use(basicauth.New(basicauth.Config{
 		Users: map[string]string{
-			"gofiber": "21022566", // Exercise 5.0
+			//"gofiber": "21022566", // Exercise 5.0
+			"testgo": "23012023",
 		},
 	}))
-	api := app.Group("/api")
-
-	v1 := api.Group("/v1")
+	
 	v1.Get("/", c.HelloTest)
 	v1.Post("/", c.BodyParserTest)
 	v1.Get("/user/:name", c.ParamsTest)
@@ -25,14 +30,14 @@ func InetRoutes(app *fiber.App) {
 	v1.Post("/register", c.Register)
 	v1.Post("/employee", c.AddEmployee) //project_2
 
-	v2 := api.Group("/v2")
+	
 	v2.Get("/", c.HelloTestV2)
 
-	v3 := api.Group("/v3")
+	
 	v3.Post("/jurin", c.AsciiConvert)
 
 	//CRUD dogs
-	dog := v1.Group("/dog")
+	
 	dog.Get("", c.GetDogs)
 	dog.Get("/filter", c.GetDog)
 	dog.Get("/json", c.GetDogsJson)
