@@ -61,7 +61,7 @@ type Company struct {
 	Facebook string `json:"facebook"`
 }
 
-type Employee struct {
+type Employee struct { //project_1
     gorm.Model
     EmployeeID int       `json:"employee_id"`
     Name       string    `json:"name"`
