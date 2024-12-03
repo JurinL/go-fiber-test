@@ -262,3 +262,15 @@ func GetLens(c *fiber.Ctx) error {
 	db.Unscoped().Where("dog_id BETWEEN 50 AND 100").Find(&dogs) //Exercise 7.1
 	return c.Status(200).JSON(dogs)
 }
+
+func AddEmployee(c *fiber.Ctx) error { //project_2
+	db := database.DBConn
+	var employee m.Employee
+
+	if err := c.BodyParser(&employee); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+
+	db.Create(&employee)
+	return c.Status(201).JSON(&employee)
+}

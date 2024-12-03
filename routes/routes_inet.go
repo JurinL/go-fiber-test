@@ -23,6 +23,7 @@ func InetRoutes(app *fiber.App) {
 	v1.Post("/valid", c.ValidTest)
 	v1.Get("/fact/:num", c.Factorial)
 	v1.Post("/register", c.Register)
+	v1.Post("/employee", c.AddEmployee) //project_2
 
 	v2 := api.Group("/v2")
 	v2.Get("/", c.HelloTestV2)
