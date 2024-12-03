@@ -43,3 +43,12 @@ type ResultData struct {
 	Name  string    `json:"name"`
 	Count int       `json:"count"`
 }
+
+type Company struct {
+	Name string `json:"name"`
+	Phone string `json:"phone"`
+	Address string `json:"address"`
+	Email string `json:"email"`
+	Website string `json:"website"`
+	Facebook string `json:"facebook"`
+}
