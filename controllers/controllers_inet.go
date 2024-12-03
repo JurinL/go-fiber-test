@@ -202,16 +202,16 @@ func RemoveDog(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
-func GetDogsJson(c *fiber.Ctx) error {
+func GetDogsJson(c *fiber.Ctx) error { // Exercise 7.2
 	db := database.DBConn
 	var dogs []m.Dogs
 	sum_red := 0
 	sum_green := 0
 	sum_pink := 0
 	sum_nocolor := 0
-	db.Find(&dogs) //10ตัว
+	db.Find(&dogs) 
 	var dataResults []m.DogsRes
-	for _, v := range dogs { //1 inet 112 //2 inet1 113
+	for _, v := range dogs { 
 		typeStr := ""
 		if v.DogID >= 10 && v.DogID <= 50 {
 			typeStr = "red"
@@ -228,12 +228,11 @@ func GetDogsJson(c *fiber.Ctx) error {
 		}
 
 		d := m.DogsRes{
-			Name:  v.Name,  //inet
-			DogID: v.DogID, //112
-			Type:  typeStr, //no color
+			Name:  v.Name,  
+			DogID: v.DogID, 
+			Type:  typeStr, 
 		}
 		dataResults = append(dataResults, d)
-		// sumAmount += v.Amount
 	}
 
 	r := m.ResultData{
