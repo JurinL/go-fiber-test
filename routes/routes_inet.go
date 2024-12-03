@@ -38,5 +38,6 @@ func InetRoutes(app *fiber.App) {
 	dog.Post("/", c.AddDog)
 	dog.Put("/:id", c.UpdateDog)
 	dog.Delete("/:id", c.RemoveDog)
-	dog.Get("/delete", c.GetDelete)
+	dog.Get("/bin", c.GetDelete) 
+	dog.Get("/lens", c.GetLens)
 }

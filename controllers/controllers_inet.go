@@ -205,19 +205,26 @@ func RemoveDog(c *fiber.Ctx) error {
 func GetDogsJson(c *fiber.Ctx) error {
 	db := database.DBConn
 	var dogs []m.Dogs
-
+	sum_red := 0
+	sum_green := 0
+	sum_pink := 0
+	sum_nocolor := 0
 	db.Find(&dogs) //10ตัว
 	var dataResults []m.DogsRes
 	for _, v := range dogs { //1 inet 112 //2 inet1 113
 		typeStr := ""
-		if v.DogID == 111 {
+		if v.DogID >= 10 && v.DogID <= 50 {
 			typeStr = "red"
-		} else if v.DogID == 113 {
+			sum_red += 1
+		} else if v.DogID >= 100 && v.DogID <= 150 {
 			typeStr = "green"
-		} else if v.DogID == 999 {
+			sum_green += 1
+		} else if v.DogID >= 200 && v.DogID <= 250 {
 			typeStr = "pink"
+			sum_pink += 1
 		} else {
 			typeStr = "no color"
+			sum_nocolor += 1
 		}
 
 		d := m.DogsRes{
@@ -230,9 +237,13 @@ func GetDogsJson(c *fiber.Ctx) error {
 	}
 
 	r := m.ResultData{
+		Count: len(dogs),
 		Data:  dataResults,
 		Name:  "golang-test",
-		Count: len(dogs), //หาผลรวม,
+		Sum_red: sum_red,
+		Sum_green: sum_green,
+		Sum_pink: sum_pink,
+		Sum_nocolor: sum_nocolor,
 	}
 	return c.Status(200).JSON(r)
 }
@@ -242,5 +253,13 @@ func GetDelete(c *fiber.Ctx) error {
 	var dogs []m.Dogs
 
 	db.Unscoped().Where("deleted_at IS NOT NULL").Find(&dogs) //Exercise 7.0.2
+	return c.Status(200).JSON(dogs)
+}
+
+func GetLens(c *fiber.Ctx) error {
+	db := database.DBConn
+	var dogs []m.Dogs
+
+	db.Unscoped().Where("dog_id BETWEEN 50 AND 100").Find(&dogs) //Exercise 7.1
 	return c.Status(200).JSON(dogs)
 }
