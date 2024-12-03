@@ -13,7 +13,8 @@ func InetRoutes(app *fiber.App) {
 	v3 := api.Group("/v3")
 	dog := v1.Group("/dog")
 	// Basic auth middleware
-	v1.Get("/employee", c.GetEmployee) //project_2
+	v1.Get("/employees", c.GetEmployees) //project_2
+	v1.Get("/employeesgen", c.GetEmployeesJson)
 	app.Use(basicauth.New(basicauth.Config{
 		Users: map[string]string{
 			//"gofiber": "21022566", // Exercise 5.0

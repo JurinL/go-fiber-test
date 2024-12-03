@@ -236,7 +236,7 @@ func GetDogsJson(c *fiber.Ctx) error { // Exercise 7.2
 		dataResults = append(dataResults, d)
 	}
 
-	r := m.ResultData{
+	r := m.ResultDogData{
 		Count:       len(dogs),
 		Data:        dataResults,
 		Name:        "golang-test",
@@ -266,7 +266,7 @@ func GetLens(c *fiber.Ctx) error {
 
 func AddEmployee(c *fiber.Ctx) error { //project_2
 	db := database.DBConn
-	var employee m.Employee
+	var employee m.Employees
 
 	if err := c.BodyParser(&employee); err != nil {
 		return c.Status(503).SendString(err.Error())
@@ -300,10 +300,65 @@ func AddEmployee(c *fiber.Ctx) error { //project_2
 	return c.Status(201).JSON(&employee)
 }
 
-func GetEmployee(c *fiber.Ctx) error {
+func GetEmployees(c *fiber.Ctx) error {
 	db := database.DBConn
-	var employee []m.Employee
+	var employee []m.Employees
 
 	db.Find(&employee) //delelete = null
 	return c.Status(200).JSON(employee)
+}
+
+func GetEmployeesJson(c *fiber.Ctx) error { // Exercise 7.2
+	db := database.DBConn
+	var employees []m.Employees
+	sum_genz := 0
+	sum_geny := 0
+	sum_genx := 0
+	sum_babyboomer := 0
+	sum_gigeneration := 0
+	db.Find(&employees)
+	var dataResults []m.EmployeesRes
+	for _, v := range employees {
+		typeStr := ""
+		if v.Age < 24 {
+			typeStr = "GenZ"
+			sum_genz += 1
+		} else if v.Age >= 24 && v.Age <= 41 {
+			typeStr = "GenY"
+			sum_geny += 1
+		} else if v.Age >= 42 && v.Age <= 56 {
+			typeStr = "GenX"
+			sum_genx += 1
+		} else if v.Age >= 57 && v.Age <= 75 {
+			typeStr = "Baby Boomer"
+			sum_babyboomer += 1
+		}  else {
+			typeStr = "G.I. Generation"
+			sum_gigeneration += 1
+		}
+
+		d := m.EmployeesRes{
+			EmployeeID: v.EmployeeID,
+			Name:  v.Name,
+			LastName: v.LastName,
+			Birthday: v.Birthday,
+			Age:      v.Age,
+			Email: v.Email,
+			Tel: v.Tel,
+			Type:  typeStr,
+		}
+		dataResults = append(dataResults, d)
+	}
+
+	r := m.ResultEmployeeData{
+		Count:       len(employees),
+		Data:        dataResults,
+		Name:        "golang-test",
+		GenZ:        sum_genz,
+		GenY:        sum_geny,
+		GenX:        sum_genx,
+		BabyBoomer:  sum_babyboomer,
+		Gigeneration: sum_gigeneration,
+	}
+	return c.Status(200).JSON(r)
 }

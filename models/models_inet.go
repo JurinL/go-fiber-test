@@ -40,7 +40,7 @@ type DogsRes struct {
 	Type  string `json:"type"`
 }
 
-type ResultData struct {
+type ResultDogData struct {
 	Count       int       `json:"count"`
 	Data        []DogsRes `json:"data"`
 	Name        string    `json:"name"`
@@ -60,7 +60,7 @@ type Company struct {
 	Facebook string `json:"facebook"`
 }
 
-type Employee struct { //project_1
+type Employees struct { //project_1
 	gorm.Model
 	EmployeeID string `json:"employee_id" validate:"required"`
 	Name       string `json:"name" validate:"required"`
@@ -69,4 +69,26 @@ type Employee struct { //project_1
 	Age        int    `json:"age" validate:"required"`
 	Email      string `json:"email" validate:"required,email"`
 	Tel        string `json:"tel" validate:"required"`
+}
+
+type EmployeesRes struct { //project_1
+	EmployeeID string `json:"employee_id" validate:"required"`
+	Name       string `json:"name" validate:"required"`
+	LastName   string `json:"lastname" validate:"required"`
+	Birthday   string `json:"birthday" validate:"required" gorm:"type:date"`
+	Age        int    `json:"age" validate:"required"`
+	Email      string `json:"email" validate:"required,email"`
+	Tel        string `json:"tel" validate:"required"`
+	Type       string `json:"type"`
+}
+
+type ResultEmployeeData struct {
+	Count        int            `json:"count"`
+	Data         []EmployeesRes `json:"data"`
+	Name         string         `json:"name"`
+	GenZ         int            `json:"genz"`
+	GenY         int            `json:"geny"`
+	GenX         int            `json:"genx"`
+	BabyBoomer   int            `json:"babyboomer"`
+	Gigeneration int            `json:"gigen"`
 }
