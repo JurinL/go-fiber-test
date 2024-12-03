@@ -1,36 +1,39 @@
 package controllers
 
 import (
-	"log"
+	"go-fiber-test/database"
 	m "go-fiber-test/models"
-	"github.com/gofiber/fiber/v2"
-	"github.com/go-playground/validator/v10"
-	"strconv"
+	"log"
 	"regexp"
+	"strconv"
+	"strings"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2"
 )
 
-func HelloTest(c *fiber.Ctx) error { 
+func HelloTest(c *fiber.Ctx) error {
 	return c.SendString("Hello, World!")
 }
 
-//Exercise 5.1
+// Exercise 5.1
 func Factorial(c *fiber.Ctx) error {
 	num, err := strconv.Atoi(c.Params("num"))
 	result := 1
 	if err != nil {
-        return err
-    }
+		return err
+	}
 	for i := 1; i <= num; i++ {
 		result *= i
 	}
 	return c.SendString(c.Params("num") + "! = " + strconv.Itoa(result))
 }
 
-func HelloTestV2(c *fiber.Ctx) error { 
+func HelloTestV2(c *fiber.Ctx) error {
 	return c.SendString("Hello, World! v2")
 }
 
-func BodyParserTest(c *fiber.Ctx) error{
+func BodyParserTest(c *fiber.Ctx) error {
 	p := new(m.Person)
 
 	if err := c.BodyParser(p); err != nil {
@@ -43,18 +46,19 @@ func BodyParserTest(c *fiber.Ctx) error{
 	return c.JSON(str)
 }
 
-func ParamsTest(c *fiber.Ctx) error{
+func ParamsTest(c *fiber.Ctx) error {
 	str := "hello ==> " + c.Params("name")
-	return c.JSON(str)	
+	return c.JSON(str)
 }
 
-func QueryTest(c *fiber.Ctx) error{
+func QueryTest(c *fiber.Ctx) error {
 	a := c.Query("search")
 	str := "my search is " + a
 	return c.JSON(str)
 }
+
 // Exercise 5.2
-func QueryParams(c *fiber.Ctx) error{
+func AsciiConvert(c *fiber.Ctx) error {
 	a := c.Query("tax_id")
 	str := ""
 	for _, char := range a {
@@ -64,7 +68,7 @@ func QueryParams(c *fiber.Ctx) error{
 }
 
 func ValidTest(c *fiber.Ctx) error {
-	
+
 	user := new(m.User)
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -75,64 +79,160 @@ func ValidTest(c *fiber.Ctx) error {
 	errors := validate.Struct(user)
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(errors.Error())
-		
+
 	}
 	return c.JSON(user)
 }
 
+// Exercise 6
 func Register(c *fiber.Ctx) error {
-    user := new(m.Register)
-    if err := c.BodyParser(&user); err != nil {
-        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-            "message": err.Error(),
-        })
-    }
+	user := new(m.Register)
+	if err := c.BodyParser(&user); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+	validate := validator.New()
+	errors := validate.Struct(user)
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(errors.Error())
+	}
 
 	// Check email pattern
 	emailMatch, _ := regexp.MatchString(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`, user.Email)
 	if !emailMatch {
-        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-            "message": "Invalid email format",
-        })
-    }
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid email format",
+		})
+	}
 
-    // Check username pattern
-    usernameMatch, _ := regexp.MatchString(`^[a-zA-Z0-9_-]+$`, user.Username)
-    if !usernameMatch {
-        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-            "message": "Username must contain only letters, numbers, underscore or hyphen",
-        })
-    }
+	// Check username pattern - only a-z A-Z 0-9 _ -
+	usernameMatch, _ := regexp.MatchString(`^[a-zA-Z0-9_-]+$`, user.Username)
+	if !usernameMatch {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Username must contain only letters, numbers, underscore or hyphen",
+		})
+	}
 
-	// Check password pattern - no whitespace allowed
-    passwordMatch, _ := regexp.MatchString(`^\S+$`, user.Password)
-    if !passwordMatch {
-        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-            "message": "Password cannot contain whitespace",
-        })
-    }
+	// Check password pattern - no whitespace allowed any letter
+	passwordMatch, _ := regexp.MatchString(`^\S+$`, user.Password)
+	if !passwordMatch {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Password cannot contain whitespace",
+		})
+	}
 
-    // Check phone pattern - no whitespace allowed
-    phoneMatch, _ := regexp.MatchString(`^\d+$`, user.Phone)
-    if !phoneMatch {
-        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-            "message": "Phone must contain only numbers without spaces",
-        })
-    }
+	// Check phone pattern - no whitespace allowed only numbers
+	phoneMatch, _ := regexp.MatchString(`^\d+$`, user.Phone)
+	if !phoneMatch {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Phone must contain only numbers without spaces",
+		})
+	}
 
-
-	// Check website pattern
-	websiteMatch, _ := regexp.MatchString(`^https?://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`, user.Website)
+	// Check website pattern - https + a-z A-Z 0-9 . - + . a-z A-Z min 2
+	websiteMatch, _ := regexp.MatchString(`^(https?)?://[a-z0-9.-]+\.[a-z]{2,}$`, user.Website)
 	if !websiteMatch {
-        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-            "message": "Invalid website format",
-        })
-    }
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid website format",
+		})
+	}
+	return c.JSON(user)
+}
 
-    validate := validator.New()
-    errors := validate.Struct(user)
-    if errors != nil {
-        return c.Status(fiber.StatusBadRequest).JSON(errors.Error())
-    }
-    return c.JSON(user)
+func GetDogs(c *fiber.Ctx) error {
+	db := database.DBConn
+	var dogs []m.Dogs
+
+	db.Find(&dogs) //delelete = null
+	return c.Status(200).JSON(dogs)
+}
+
+func GetDog(c *fiber.Ctx) error {
+	db := database.DBConn
+	search := strings.TrimSpace(c.Query("search"))
+	var dog []m.Dogs
+
+	result := db.Find(&dog, "dog_id = ?", search)
+
+	// returns found records count, equals `len(users)
+	if result.RowsAffected == 0 {
+		return c.SendStatus(404)
+	}
+	return c.Status(200).JSON(&dog)
+}
+
+func AddDog(c *fiber.Ctx) error {
+	//twst3
+	db := database.DBConn
+	var dog m.Dogs
+
+	if err := c.BodyParser(&dog); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+
+	db.Create(&dog)
+	return c.Status(201).JSON(dog)
+}
+
+func UpdateDog(c *fiber.Ctx) error {
+	db := database.DBConn
+	var dog m.Dogs
+	id := c.Params("id")
+
+	if err := c.BodyParser(&dog); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+
+	db.Where("id = ?", id).Updates(&dog)
+	return c.Status(200).JSON(dog)
+}
+
+func RemoveDog(c *fiber.Ctx) error {
+	db := database.DBConn
+	id := c.Params("id")
+	var dog m.Dogs
+
+	result := db.Delete(&dog, id)
+
+	if result.RowsAffected == 0 {
+		return c.SendStatus(404)
+	}
+
+	return c.SendStatus(200)
+}
+
+func GetDogsJson(c *fiber.Ctx) error {
+	db := database.DBConn
+	var dogs []m.Dogs
+
+	db.Find(&dogs) //10ตัว
+	var dataResults []m.DogsRes
+	for _, v := range dogs { //1 inet 112 //2 inet1 113
+		typeStr := ""
+		if v.DogID == 111 {
+			typeStr = "red"
+		} else if v.DogID == 113 {
+			typeStr = "green"
+		} else if v.DogID == 999 {
+			typeStr = "pink"
+		} else {
+			typeStr = "no color"
+		}
+
+		d := m.DogsRes{
+			Name:  v.Name,  //inet
+			DogID: v.DogID, //112
+			Type:  typeStr, //no color
+		}
+		dataResults = append(dataResults, d)
+		// sumAmount += v.Amount
+	}
+
+	r := m.ResultData{
+		Data:  dataResults,
+		Name:  "golang-test",
+		Count: len(dogs), //หาผลรวม,
+	}
+	return c.Status(200).JSON(r)
 }

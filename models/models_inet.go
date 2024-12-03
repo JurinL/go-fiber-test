@@ -1,5 +1,7 @@
 package models
 
+import "gorm.io/gorm"
+
 // Person represents a person with a name and password.
 type Person struct {
 	Name string `json:"name"`
@@ -24,4 +26,20 @@ type Register struct {
 	Website      string `json:"website" validate:"required,url,min=2,max=30"`
 }
 
-//,regexp=^[a-zA-Z0-9_]+$ regexp=^[0-9-]+$
+type Dogs struct {
+	gorm.Model 
+	Name string `json:"name"`
+	DogID int `json:"dog_id"`
+}
+
+type DogsRes struct {
+	Name  string `json:"name"`
+	DogID int    `json:"dog_id"`
+	Type  string `json:"type"`
+}
+
+type ResultData struct {
+	Data  []DogsRes `json:"data"`
+	Name  string    `json:"name"`
+	Count int       `json:"count"`
+}
