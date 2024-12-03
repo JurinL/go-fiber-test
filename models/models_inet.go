@@ -44,6 +44,7 @@ type ResultData struct {
 	Count int       `json:"count"`
 }
 
+// Exercise 7.0.1
 type Company struct {
 	Name string `json:"name"`
 	Phone string `json:"phone"`

@@ -236,3 +236,11 @@ func GetDogsJson(c *fiber.Ctx) error {
 	}
 	return c.Status(200).JSON(r)
 }
+
+func GetDelete(c *fiber.Ctx) error {
+	db := database.DBConn
+	var dogs []m.Dogs
+
+	db.Unscoped().Where("deleted_at IS NOT NULL").Find(&dogs) //Exercise 7.0.2
+	return c.Status(200).JSON(dogs)
+}
