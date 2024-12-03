@@ -1,6 +1,9 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 // Person represents a person with a name and password.
 type Person struct {
@@ -56,4 +59,15 @@ type Company struct {
 	Email string `json:"email"`
 	Website string `json:"website"`
 	Facebook string `json:"facebook"`
+}
+
+type Employee struct {
+    gorm.Model
+    EmployeeID int       `json:"employee_id"`
+    Name       string    `json:"name"`
+    LastName   string    `json:"lastname"`
+    Birthday   time.Time `json:"birthday"`
+    Age        int       `json:"age"`
+    Email      string    `json:"email"`
+    Tel        string    `json:"tel"`
 }
