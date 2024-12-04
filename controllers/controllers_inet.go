@@ -259,7 +259,7 @@ func GetLens(c *fiber.Ctx) error {
 	db := database.DBConn
 	var dogs []m.Dogs
 
-	db.Unscoped().Where("dog_id BETWEEN 50 AND 100").Find(&dogs) //Exercise 7.1
+	db.Where("dog_id BETWEEN 50 AND 100").Find(&dogs) //Exercise 7.1
 	return c.Status(200).JSON(dogs)
 }
 
