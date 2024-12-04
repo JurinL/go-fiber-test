@@ -200,7 +200,7 @@ func RemoveDog(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(200)
-}
+}//test
 
 func GetDogsJson(c *fiber.Ctx) error { // Exercise 7.2
 	db := database.DBConn
