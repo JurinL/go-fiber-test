@@ -274,6 +274,27 @@ func AddEmployee(c *fiber.Ctx) error { //project_2
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(errors.Error())
 	}
+	// Check username pattern - only a-z A-Z 0-9 _ -
+	nameMatch, _ := regexp.MatchString(`^[a-zA-Z]+$`, employee.Name)
+	if !nameMatch {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Name must contain only letters",
+		})
+	}
+	// Check username pattern - only a-z A-Z 0-9 _ -
+	lastnameMatch, _ := regexp.MatchString(`^[a-zA-Z]+$`, employee.LastName)
+	if !lastnameMatch {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Lastname must contain only letters",
+		})
+	}
+	// Check phone pattern - no whitespace allowed only numbers
+	phoneMatch, _ := regexp.MatchString(`^\d+$`, employee.Tel)
+	if !phoneMatch {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Phone must contain only numbers without spaces",
+		})
+	}
 	//check birthday
 	layouts := []string{"02/01/2006", "2006-01-02", "02-01-2006"}
 	var parsedDate time.Time
@@ -290,6 +311,7 @@ func AddEmployee(c *fiber.Ctx) error { //project_2
 			"error":   err.Error(),
 		})
 	}
+	
 	employee.Birthday = parsedDate.Format("2006-01-02") // Standardize output format
 	db.Create(&employee)
 	return c.Status(201).JSON(&employee)
