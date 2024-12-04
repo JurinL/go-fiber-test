@@ -52,6 +52,7 @@ type ResultDogData struct {
 
 // Exercise 7.0.1
 type Company struct {
+	gorm.Model
 	Name     string `json:"name"`
 	Phone    string `json:"phone"`
 	Address  string `json:"address"`

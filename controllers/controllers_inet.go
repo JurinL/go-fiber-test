@@ -145,7 +145,7 @@ func GetDogs(c *fiber.Ctx) error {
 	db := database.DBConn
 	var dogs []m.Dogs
 
-	db.Find(&dogs) //delelete = null
+	db.Find(&dogs)
 	return c.Status(200).JSON(dogs)
 }
 
@@ -164,7 +164,6 @@ func GetDog(c *fiber.Ctx) error {
 }
 
 func AddDog(c *fiber.Ctx) error {
-	//twst3
 	db := database.DBConn
 	var dog m.Dogs
 
@@ -361,4 +360,67 @@ func GetEmployeesJson(c *fiber.Ctx) error { // Exercise 7.2
 		Gigeneration: sum_gigeneration,
 	}
 	return c.Status(200).JSON(r)
+}
+
+// Company CRUD
+
+func GetCompanies(c *fiber.Ctx) error {
+	db := database.DBConn
+	var company []m.Company
+
+	db.Find(&company)
+	return c.Status(200).JSON(company)
+}
+
+func GetCompany(c *fiber.Ctx) error {
+	db := database.DBConn
+	search := strings.TrimSpace(c.Query("search"))
+	var company []m.Company
+
+	result := db.Find(&company, "id = ?", search)
+
+	// returns found records count, equals `len(users)
+	if result.RowsAffected == 0 {
+		return c.SendStatus(404)
+	}
+	return c.Status(200).JSON(&company)
+}
+
+func CreateCompany(c *fiber.Ctx) error {
+	db := database.DBConn
+	var company m.Company
+
+	if err := c.BodyParser(&company); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+
+	db.Create(&company)
+	return c.Status(201).JSON(company)
+}
+
+func UpdateCompany(c *fiber.Ctx) error {
+	db := database.DBConn
+	var company m.Company
+	id := c.Params("id")
+
+	if err := c.BodyParser(&company); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+
+	db.Where("id = ?", id).Updates(&company)
+	return c.Status(200).JSON(company)
+}
+
+func DeleteCompany(c *fiber.Ctx) error {
+	db := database.DBConn
+	id := c.Params("id")
+	var company m.Company
+
+	result := db.Delete(&company, id)
+
+	if result.RowsAffected == 0 {
+		return c.SendStatus(404)
+	}
+
+	return c.Status(200).SendString("Company successfully deleted")
 }

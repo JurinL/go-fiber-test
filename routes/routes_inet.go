@@ -12,9 +12,17 @@ func InetRoutes(app *fiber.App) {
 	v2 := api.Group("/v2")
 	v3 := api.Group("/v3")
 	dog := v1.Group("/dog")
-	// Basic auth middleware
+	company := v1.Group("/company")
 	v1.Get("/employees", c.GetEmployees) //project_2
 	v1.Get("/employeesgen", c.GetEmployeesJson)
+
+	company.Get("/filter/", c.GetCompany)
+	company.Get("/", c.GetCompanies)
+	company.Post("/", c.CreateCompany)
+	company.Put("/:id", c.UpdateCompany)
+	company.Delete("/:id", c.DeleteCompany)
+
+	//basic auth
 	app.Use(basicauth.New(basicauth.Config{
 		Users: map[string]string{
 			//"gofiber": "21022566", // Exercise 5.0
@@ -30,7 +38,6 @@ func InetRoutes(app *fiber.App) {
 	v1.Get("/fact/:num", c.Factorial)
 	v1.Post("/register", c.Register)
 	v1.Post("/employee", c.AddEmployee) //project_2
-
 	
 	v2.Get("/", c.HelloTestV2)
 
@@ -47,4 +54,6 @@ func InetRoutes(app *fiber.App) {
 	dog.Delete("/:id", c.RemoveDog)
 	dog.Get("/bin", c.GetDelete) 
 	dog.Get("/lens", c.GetLens)
+
+	
 }
