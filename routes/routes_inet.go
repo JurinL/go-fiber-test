@@ -15,6 +15,7 @@ func InetRoutes(app *fiber.App) {
 	company := v1.Group("/company")
 	v1.Get("/employees", c.GetEmployees) //project_2
 	v1.Get("/employeesgen", c.GetEmployeesJson)
+	v1.Get("/employees/search", c.SearchEmployee)
 
 	company.Get("/filter/", c.GetCompany)
 	company.Get("/", c.GetCompanies)
@@ -38,7 +39,6 @@ func InetRoutes(app *fiber.App) {
 	v1.Get("/fact/:num", c.Factorial)
 	v1.Post("/register", c.Register)
 	v1.Post("/employee", c.AddEmployee) //project_2
-	
 	v2.Get("/", c.HelloTestV2)
 
 	

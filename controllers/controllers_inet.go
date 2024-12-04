@@ -424,3 +424,20 @@ func DeleteCompany(c *fiber.Ctx) error {
 
 	return c.Status(200).SendString("Company successfully deleted")
 }
+
+func SearchEmployee(c *fiber.Ctx) error {
+    db := database.DBConn
+    search := strings.TrimSpace(c.Query("search"))
+    var employees []m.Employees
+    
+    result := db.Where("employee_id LIKE ? OR name LIKE ? OR last_name LIKE ?",
+        "%"+search+"%", 
+        "%"+search+"%", 
+        "%"+search+"%").
+        Find(&employees)
+    
+    if result.RowsAffected == 0 {
+        return c.SendStatus(404)
+    }
+    return c.Status(200).JSON(&employees)
+}
