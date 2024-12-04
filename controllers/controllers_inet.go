@@ -200,7 +200,7 @@ func RemoveDog(c *fiber.Ctx) error {
 	}
 
 	return c.SendStatus(200)
-}//test
+} //test
 
 func GetDogsJson(c *fiber.Ctx) error { // Exercise 7.2
 	db := database.DBConn
@@ -266,17 +266,14 @@ func GetLens(c *fiber.Ctx) error {
 func AddEmployee(c *fiber.Ctx) error { //project_2
 	db := database.DBConn
 	var employee m.Employees
-
 	if err := c.BodyParser(&employee); err != nil {
 		return c.Status(503).SendString(err.Error())
 	}
-
 	validate := validator.New()
 	errors := validate.Struct(employee)
 	if errors != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(errors.Error())
 	}
-
 	//check birthday
 	layouts := []string{"02/01/2006", "2006-01-02", "02-01-2006"}
 	var parsedDate time.Time
@@ -294,7 +291,6 @@ func AddEmployee(c *fiber.Ctx) error { //project_2
 		})
 	}
 	employee.Birthday = parsedDate.Format("2006-01-02") // Standardize output format
-
 	db.Create(&employee)
 	return c.Status(201).JSON(&employee)
 }
@@ -302,9 +298,29 @@ func AddEmployee(c *fiber.Ctx) error { //project_2
 func GetEmployees(c *fiber.Ctx) error {
 	db := database.DBConn
 	var employee []m.Employees
-
 	db.Find(&employee) //delelete = null
 	return c.Status(200).JSON(employee)
+}
+func UpdateEmployee(c *fiber.Ctx) error {
+	db := database.DBConn
+	var employee m.Employees
+	id := c.Params("id")
+	if err := c.BodyParser(&employee); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+	db.Where("id = ?", id).Updates(&employee)
+	return c.Status(200).JSON(employee)
+}
+
+func DeleteEmployee(c *fiber.Ctx) error {
+	db := database.DBConn
+	id := c.Params("id")
+	var employee m.Employees
+	result := db.Delete(&employee, id)
+	if result.RowsAffected == 0 {
+		return c.SendStatus(404)
+	}
+	return c.Status(200).SendString("successfully delete Employee profile")
 }
 
 func GetEmployeesJson(c *fiber.Ctx) error { // Exercise 7.2
@@ -331,32 +347,32 @@ func GetEmployeesJson(c *fiber.Ctx) error { // Exercise 7.2
 		} else if v.Age >= 57 && v.Age <= 75 {
 			typeStr = "Baby Boomer"
 			sum_babyboomer += 1
-		}  else {
+		} else {
 			typeStr = "G.I. Generation"
 			sum_gigeneration += 1
 		}
 
 		d := m.EmployeesRes{
 			EmployeeID: v.EmployeeID,
-			Name:  v.Name,
-			LastName: v.LastName,
-			Birthday: v.Birthday,
-			Age:      v.Age,
-			Email: v.Email,
-			Tel: v.Tel,
-			Type:  typeStr,
+			Name:       v.Name,
+			LastName:   v.LastName,
+			Birthday:   v.Birthday,
+			Age:        v.Age,
+			Email:      v.Email,
+			Tel:        v.Tel,
+			Type:       typeStr,
 		}
 		dataResults = append(dataResults, d)
 	}
 
 	r := m.ResultEmployeeData{
-		Count:       len(employees),
-		Data:        dataResults,
-		Name:        "golang-test",
-		GenZ:        sum_genz,
-		GenY:        sum_geny,
-		GenX:        sum_genx,
-		BabyBoomer:  sum_babyboomer,
+		Count:        len(employees),
+		Data:         dataResults,
+		Name:         "golang-test",
+		GenZ:         sum_genz,
+		GenY:         sum_geny,
+		GenX:         sum_genx,
+		BabyBoomer:   sum_babyboomer,
 		Gigeneration: sum_gigeneration,
 	}
 	return c.Status(200).JSON(r)
@@ -426,18 +442,18 @@ func DeleteCompany(c *fiber.Ctx) error {
 }
 
 func SearchEmployee(c *fiber.Ctx) error {
-    db := database.DBConn
-    search := strings.TrimSpace(c.Query("search"))
-    var employees []m.Employees
-    
-    result := db.Where("employee_id LIKE ? OR name LIKE ? OR last_name LIKE ?",
-        "%"+search+"%", 
-        "%"+search+"%", 
-        "%"+search+"%").
-        Find(&employees)
-    
-    if result.RowsAffected == 0 {
-        return c.SendStatus(404)
-    }
-    return c.Status(200).JSON(&employees)
+	db := database.DBConn
+	search := strings.TrimSpace(c.Query("search"))
+	var employees []m.Employees
+
+	result := db.Where("employee_id LIKE ? OR name LIKE ? OR last_name LIKE ?",
+		"%"+search+"%",
+		"%"+search+"%",
+		"%"+search+"%").
+		Find(&employees)
+
+	if result.RowsAffected == 0 {
+		return c.SendStatus(404)
+	}
+	return c.Status(200).JSON(&employees)
 }

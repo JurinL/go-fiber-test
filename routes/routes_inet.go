@@ -13,23 +13,28 @@ func InetRoutes(app *fiber.App) {
 	v3 := api.Group("/v3")
 	dog := v1.Group("/dog")
 	company := v1.Group("/company")
-	v1.Get("/employees", c.GetEmployees) //project_2
-	v1.Get("/employeesgen", c.GetEmployeesJson)
-	v1.Get("/employees/search", c.SearchEmployee)
+	
+	
 
 	company.Get("/filter/", c.GetCompany)
 	company.Get("/", c.GetCompanies)
 	company.Post("/", c.CreateCompany)
 	company.Put("/:id", c.UpdateCompany)
 	company.Delete("/:id", c.DeleteCompany)
-
+	
+	employee := v1.Group("/employee")
+	employee.Get("/", c.GetEmployees) //project_2
+	employee.Get("/json", c.GetEmployeesJson)
+	employee.Get("/search", c.SearchEmployee)
 	//basic auth
 	app.Use(basicauth.New(basicauth.Config{
 		Users: map[string]string{
-			//"gofiber": "21022566", // Exercise 5.0
 			"testgo": "23012023",
 		},
 	}))
+	employee.Post("/", c.AddEmployee) //project_2
+	employee.Put("/:id", c.UpdateEmployee)
+	employee.Delete("/:id", c.DeleteEmployee)
 	
 	v1.Get("/", c.HelloTest)
 	v1.Post("/", c.BodyParserTest)
@@ -38,7 +43,8 @@ func InetRoutes(app *fiber.App) {
 	v1.Post("/valid", c.ValidTest)
 	v1.Get("/fact/:num", c.Factorial)
 	v1.Post("/register", c.Register)
-	v1.Post("/employee", c.AddEmployee) //project_2
+	
+
 	v2.Get("/", c.HelloTestV2)
 
 	
